@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { errorHandler, fnWrapper, TypeOrmTransaction } from './decorator';
+import { errorHandler, fnWrapper, newError, TypeOrmTransaction } from './decorator';
 import { subResponsType } from 'src/entities/models/sub';
 
 type responseType = subResponsType;
@@ -21,8 +21,12 @@ export class SubService {
   // };
 
   private getService = async (name: string): Promise<responseType> => {
-    return { value: [name], error: false, message: 'OK' };
+    throw new newError('TEST', {body: 'bodyだよ'});
+    return { statusCode: 200, value: [name], error: false, message: 'OK' };
   };
-  getTest = async (name: string) =>
-    errorHandler(fnWrapper(this.getService(name)));
+
+  public getTest = async (name: string) => {
+    const [statusCode, body] = errorHandler(fnWrapper(this.getService(name)));
+    return ret;
+  };
 }

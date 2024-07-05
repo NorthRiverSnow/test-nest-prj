@@ -13,40 +13,71 @@ import {
   QueryRunner,
 } from 'typeorm';
 
-export class RSOCException extends HttpException {
-  constructor(error: string) {
-    if (error === 'TYPE_ORM_ERROR') {
-      super(
-        {
-          statusCode: 400,
-          response: { error: 'error', values: 'type orm error' },
-        },
-        HttpStatus.OK,
-      );
-      return;
-    }
+// export class RSOCException extends HttpException {
+//   constructor(error: string) {
+//     console.log(error);
+//     if (error === 'TYPE_ORM_ERROR') {
+//       super(
+//         {
+//           statusCode: 400,
+//           error: 'error',
+//           message: 'エラーだよ',
+//           values: 'type orm error',
+//         },
+//         HttpStatus.OK,
+//       );
+//       return;
+//     }
 
-    if (error === 'NO_DATA_FOUND') {
-      super(
-        {
-          statusCode: 400,
-          response: { error: 'error', values: 'no data found' },
-        },
-        HttpStatus.OK,
-      );
-      return;
-    }
+//     if (error === 'NO_DATA_FOUND') {
+//       super(
+//         {
+//           statusCode: 400,
+//           error: 'error',
+//           message: 'データないよ',
+//           values: 'no data error',
+//         },
+//         HttpStatus.OK,
+//       );
+//       return;
+//     }
 
-    super(
-      {
-        statusCode: 400,
-        response: { error: 'error', values: 'unknown error' },
-      },
-      HttpStatus.OK,
-    );
-    return;
+//     super(
+//       {
+//         statusCode: 400,
+//         response: { error: 'error', values: 'unknown error' },
+//       },
+//       HttpStatus.OK,
+//     );
+//     return;
+//   }
+// }
+
+export class newError extends Error {
+  readonly resBody;
+  constructor(message: string, resBody: unknown) {
+    super(message);
+    this.resBody = resBody;
   }
 }
+
+const RSOCException = (error: unknown) => {
+  if (error instanceof Error && error.message === 'TOO_BIG_IMPORT_FILE_SIZE') {
+    return {
+      status: 'error',
+      message: 'ERRORS.IMPORT_FILE_SIZE',
+    };
+  }
+  if (error instanceof newError && error.message === 'ERROR_CODE_104') {
+    return [new ServiceResponse(104), error.resBody];
+  }
+
+  if (error instanceof newError && error.message === 'ERROR_CODE_105') {
+    return [new ServiceResponse(105), error.resBody];
+  }
+
+  return [new ServiceResponse(200), 'データがないよ'];
+};
 
 @Injectable()
 export class ParseOptionalDatePipe implements PipeTransform {
@@ -68,7 +99,10 @@ export class ParseRequiredPipe implements PipeTransform {
   }
 }
 
-export const errorHandler = async <T>(decorateFn: () => Promise<T>) => {
+export const errorHandler = async <T>(
+  decorateFn: () => Promise<T>,
+  errorHandler = RSOCException,
+) => {
   try {
     return await decorateFn();
   } catch (error) {
@@ -78,9 +112,9 @@ export const errorHandler = async <T>(decorateFn: () => Promise<T>) => {
       error instanceof CannotCreateEntityIdMapError
     ) {
       console.log('error', error);
-      throw new RSOCException('TYPE_ORM_ERROR');
+      errorHandler(error);
     } else {
-      throw new RSOCException(error.message);
+      errorHandler(error);
     }
   }
 };
@@ -106,6 +140,7 @@ export const wrapInTransaction = async <T>(
 };
 
 export type Result = {
+  statusCode: number;
   value: unknown;
   error: boolean;
   message: string;
