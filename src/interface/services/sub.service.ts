@@ -1,13 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { errorHandler, fnWrapper, newError, TypeOrmTransaction } from './decorator';
+import {
+  ErrorHandler,
+  fnWrapper,
+  jsonResponseWithErrorHandler,
+  TypeOrmTransaction,
+} from './decorator';
 import { subResponsType } from 'src/entities/models/sub';
+
+import { Response } from 'express';
 
 type responseType = subResponsType;
 // type responseDataType = subResponseDataType;
 
 @Injectable()
 export class SubService {
-  constructor(private typeOrmTransaction: TypeOrmTransaction) {}
+  constructor(
+    private typeOrmTransaction: TypeOrmTransaction,
+    private readonly errorHandler: ErrorHandler,
+  ) {}
 
   // private getService = async (name: string): Promise<responseType> => {
   //   console.log(name);
@@ -15,18 +25,20 @@ export class SubService {
   //     responseDataType[]
   //   >((qr) => qr.query('select * from t_test'));
   //   return {
-  //     code: HttpStatus.OK,
+  //     code: 200,
   //     body: data,
   //   };
   // };
 
   private getService = async (name: string): Promise<responseType> => {
-    throw new newError('TEST', {body: 'bodyだよ'});
-    return { statusCode: 200, value: [name], error: false, message: 'OK' };
+    return { code: 200, body: `the recieved name is ${name}` };
   };
+  getTestUsingErrorClass = async (res: Response, name: string) =>
+    this.errorHandler.handleErrorWithJsonResponse(
+      res,
+      fnWrapper(this.getService(name)),
+    );
 
-  public getTest = async (name: string) => {
-    const [statusCode, body] = errorHandler(fnWrapper(this.getService(name)));
-    return ret;
-  };
+  getTestUsingErrorFunction = async (res: Response, name: string) =>
+    jsonResponseWithErrorHandler(res, fnWrapper(this.getService(name)));
 }

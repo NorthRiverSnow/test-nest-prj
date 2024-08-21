@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  HttpException,
   HttpStatus,
   Injectable,
   PipeTransform,
@@ -13,70 +12,25 @@ import {
   QueryRunner,
 } from 'typeorm';
 
-// export class RSOCException extends HttpException {
-//   constructor(error: string) {
-//     console.log(error);
-//     if (error === 'TYPE_ORM_ERROR') {
-//       super(
-//         {
-//           statusCode: 400,
-//           error: 'error',
-//           message: 'エラーだよ',
-//           values: 'type orm error',
-//         },
-//         HttpStatus.OK,
-//       );
-//       return;
-//     }
+import { Response } from 'express';
 
-//     if (error === 'NO_DATA_FOUND') {
-//       super(
-//         {
-//           statusCode: 400,
-//           error: 'error',
-//           message: 'データないよ',
-//           values: 'no data error',
-//         },
-//         HttpStatus.OK,
-//       );
-//       return;
-//     }
-
-//     super(
-//       {
-//         statusCode: 400,
-//         response: { error: 'error', values: 'unknown error' },
-//       },
-//       HttpStatus.OK,
-//     );
-//     return;
-//   }
-// }
-
-export class newError extends Error {
-  readonly resBody;
-  constructor(message: string, resBody: unknown) {
-    super(message);
-    this.resBody = resBody;
-  }
-}
-
-const RSOCException = (error: unknown) => {
-  if (error instanceof Error && error.message === 'TOO_BIG_IMPORT_FILE_SIZE') {
+const handleErrorFn = (error: unknown) => {
+  if (
+    error instanceof QueryFailedError ||
+    error instanceof EntityNotFoundError ||
+    error instanceof CannotCreateEntityIdMapError
+  ) {
     return {
-      status: 'error',
-      message: 'ERRORS.IMPORT_FILE_SIZE',
+      code: HttpStatus.INTERNAL_SERVER_ERROR,
+      body: error.message,
     };
   }
-  if (error instanceof newError && error.message === 'ERROR_CODE_104') {
-    return [new ServiceResponse(104), error.resBody];
+  if (error instanceof Error && error.message === 'TOO_BIG_IMPORT_FILE_SIZE') {
+    return {
+      code: HttpStatus.BAD_REQUEST,
+      body: 'the file size is too big',
+    };
   }
-
-  if (error instanceof newError && error.message === 'ERROR_CODE_105') {
-    return [new ServiceResponse(105), error.resBody];
-  }
-
-  return [new ServiceResponse(200), 'データがないよ'];
 };
 
 @Injectable()
@@ -99,9 +53,9 @@ export class ParseRequiredPipe implements PipeTransform {
   }
 }
 
-export const errorHandler = async <T>(
-  decorateFn: () => Promise<T>,
-  errorHandler = RSOCException,
+const errorHandlerFn = async (
+  decorateFn: () => Promise<Result> | Result,
+  errorHandler = handleErrorFn,
 ) => {
   try {
     return await decorateFn();
@@ -140,16 +94,15 @@ export const wrapInTransaction = async <T>(
 };
 
 export type Result = {
-  statusCode: number;
-  value: unknown;
-  error: boolean;
-  message: string;
+  code: number;
+  body: unknown;
 };
 
 export const fnWrapper = (input: Result | Promise<Result>) => async () => {
   const res = await input;
   return {
-    body: res,
+    code: res.code,
+    body: res.body,
   };
 };
 
@@ -175,22 +128,25 @@ export class TypeOrmTransaction {
   }
 }
 
+const jsonResponse = async (
+  res: Response,
+  decoratedFn: () => Promise<Result> | Result,
+) => {
+  const result = await decoratedFn();
+  res.status(result.code).json(result.body);
+};
+
+export const jsonResponseWithErrorHandler = async (
+  res: Response,
+  fn: () => Promise<Result> | Result,
+) => jsonResponse(res, () => errorHandlerFn(fn));
+
 @Injectable()
 export class ErrorHandler {
-  async handleError<T>(fn: () => Promise<T>) {
-    try {
-      return fn();
-    } catch (error) {
-      if (
-        error instanceof QueryFailedError ||
-        error instanceof EntityNotFoundError ||
-        error instanceof CannotCreateEntityIdMapError
-      ) {
-        console.log('error', error);
-        throw new RSOCException('TYPE_ORM_ERROR');
-      } else {
-        throw new RSOCException(error.message);
-      }
-    }
-  }
+  handleErrorWithJsonResponse = async (
+    res: Response,
+    fn: () => Promise<Result> | Result,
+  ) => {
+    return jsonResponse(res, () => errorHandlerFn(fn));
+  };
 }
