@@ -29,13 +29,6 @@ services:
 
   api:
     image: node:20.18.0-alpine
-    environment:
-      - MYSQL_SERVER=db
-      - MYSQL_USER=${DB_USER}
-      - MYSQL_PASSWORD=${DB_PASS}
-      - MYSQL_DATABASE=${DB_NAME}
-      - TZ=${TZ}
-      - CHOKIDAR_USEPOLLING=true
 
     #コンテナを起動させ続けるよう設定
     tty: true
