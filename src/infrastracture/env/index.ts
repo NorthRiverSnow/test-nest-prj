@@ -8,10 +8,8 @@
 // const optionalLoadAsString = (index: string): string | undefined => {
 //   return process.env[index];
 // };
-console.log(process.env);
 const loadAsString = (index: string): string => {
   const value: string | undefined = process.env[index];
-  console.log(value);
   if (value === undefined) {
     throw new Error(`${index} must be set!`);
   }
@@ -46,5 +44,6 @@ export const env = {
   DB_PASS: loadAsString('DB_PASS'),
   DB_PORT: loadAsNumber('DB_PORT'),
   DB_USER: loadAsString('DB_USER'),
+  API_PORT: loadAsNumber('API_PORT'),
   TZ: loadAsString('TZ'),
 };
