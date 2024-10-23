@@ -1,0 +1,60 @@
+services:
+  db:
+    # 起動するイメージを指定
+    image: mysql:8.4.3
+
+    # 環境変数を設定
+    environment:
+      - MYSQL_ROOT_HOST=${DB_HOST}
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASS}
+      - MYSQL_ROOT_PASSWORD=${DB_PASS}
+      - TZ=${TZ}
+
+    healthcheck:
+      test: "mysqladmin ping -h localhost"
+      interval: 10s
+      retries: 5
+
+    # ホスト側のポート:コンテナのポート
+    ports:
+      - '${DB_PORT}:3306'
+
+    # ボリュームバインド
+    volumes:
+      - ../db/conf:/etc/mysql/conf.d/:ro
+      - ../db/logs:/var/log/mysql
+      - ./script:/docker-entrypoint-initdb.d
+
+  api:
+    image: node:20.18.0-alpine
+    environment:
+      - MYSQL_SERVER=db
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASS}
+      - MYSQL_DATABASE=${DB_NAME}
+      - TZ=${TZ}
+      - CHOKIDAR_USEPOLLING=true
+
+    #コンテナを起動させ続けるよう設定
+    tty: true
+
+    ports:
+      - '3000:3000'
+
+    # ソースコードを格納するフォルダをマウント
+    #（ホスト側の./apiをコンテナの/appにマウント）
+    volumes:
+      - ..:/app
+
+    # 起動時のカレントフォルダを指定
+    working_dir: /app
+
+    # 起動後に実行するコマンドを指定
+    command: yarn start:dev
+
+    #依存関係（apiコンテナより先にdbコンテナが起動するように設定）
+    depends_on:
+      db:
+        condition: service_healthy
