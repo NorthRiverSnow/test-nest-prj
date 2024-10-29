@@ -38,12 +38,24 @@ const loadAsNumber = (index: string): number => {
 //   return asNumber;
 // };
 
+const _env = process.env.TEST
+  ? {
+      DB_NAME: loadAsString('TEST_DB_NAME'),
+      DB_HOST: loadAsString('TEST_DB_HOST'),
+      DB_PASS: loadAsString('TEST_DB_PASS'),
+      DB_PORT: loadAsNumber('TEST_DB_PORT'),
+      DB_USER: loadAsString('TEST_DB_USER'),
+    }
+  : {
+      DB_NAME: loadAsString('DB_NAME'),
+      DB_HOST: loadAsString('DB_HOST'),
+      DB_PASS: loadAsString('DB_PASS'),
+      DB_PORT: loadAsNumber('DB_PORT'),
+      DB_USER: loadAsString('DB_USER'),
+    };
+
 export const env = {
-  DB_NAME: loadAsString('DB_NAME'),
-  DB_HOST: loadAsString('DB_HOST'),
-  DB_PASS: loadAsString('DB_PASS'),
-  DB_PORT: loadAsNumber('DB_PORT'),
-  DB_USER: loadAsString('DB_USER'),
+  ..._env,
   API_PORT: loadAsNumber('API_PORT'),
   TZ: loadAsString('TZ'),
 };

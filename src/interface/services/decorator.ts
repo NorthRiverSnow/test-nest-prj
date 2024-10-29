@@ -1,18 +1,7 @@
-import {
-  BadRequestException,
-  HttpStatus,
-  Injectable,
-  PipeTransform,
-} from '@nestjs/common';
-import {
-  CannotCreateEntityIdMapError,
-  DataSource,
-  EntityNotFoundError,
-  QueryFailedError,
-  QueryRunner,
-} from 'typeorm';
+import { HttpStatus, Injectable } from '@nestjs/common';
 
 import { Response } from 'express';
+import { CannotCreateEntityIdMapError, EntityNotFoundError, QueryFailedError } from 'typeorm';
 
 const handleErrorFn = (error: unknown) => {
   if (
@@ -33,30 +22,7 @@ const handleErrorFn = (error: unknown) => {
   }
 };
 
-@Injectable()
-export class ParseOptionalDatePipe implements PipeTransform {
-  transform(value: string | undefined | null) {
-    if (!value) return value;
-    const transformedValue = new Date(value);
-    if (isNaN(transformedValue.getTime())) {
-      throw new BadRequestException('Invalid date');
-    }
-    return transformedValue;
-  }
-}
-
-@Injectable()
-export class ParseRequiredPipe implements PipeTransform {
-  transform(value: unknown | undefined | null) {
-    if (!value) throw new BadRequestException('required property');
-    return value;
-  }
-}
-
-const errorHandlerFn = async (
-  decorateFn: () => Promise<Result> | Result,
-  errorHandler = handleErrorFn,
-) => {
+const errorHandlerFn = async (decorateFn: () => Promise<Result> | Result, errorHandler = handleErrorFn) => {
   try {
     return await decorateFn();
   } catch (error) {
@@ -73,26 +39,6 @@ const errorHandlerFn = async (
   }
 };
 
-export const wrapInTransaction = async <T>(
-  dataSource: DataSource,
-  fn: (queryRunner: QueryRunner) => Promise<T>,
-) => {
-  const queryRunner = dataSource.createQueryRunner();
-  await queryRunner.connect();
-  await queryRunner.startTransaction();
-
-  try {
-    const ret = await fn(queryRunner);
-    await queryRunner.commitTransaction();
-    return ret;
-  } catch (error) {
-    await queryRunner.rollbackTransaction();
-    throw error;
-  } finally {
-    await queryRunner.release();
-  }
-};
-
 export type Result = {
   code: number;
   body: unknown;
@@ -106,47 +52,17 @@ export const fnWrapper = (input: Result | Promise<Result>) => async () => {
   };
 };
 
-@Injectable()
-export class TypeOrmTransaction {
-  constructor(private dataSource: DataSource) {}
-
-  async wrapInTransaction<T>(fn: (queryRunner: QueryRunner) => Promise<T>) {
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
-    try {
-      const ret = await fn(queryRunner);
-      await queryRunner.commitTransaction();
-      return ret;
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      throw error;
-    } finally {
-      await queryRunner.release();
-    }
-  }
-}
-
-const jsonResponse = async (
-  res: Response,
-  decoratedFn: () => Promise<Result> | Result,
-) => {
+const jsonResponse = async (res: Response, decoratedFn: () => Promise<Result> | Result) => {
   const result = await decoratedFn();
   res.status(result.code).json(result.body);
 };
 
-export const jsonResponseWithErrorHandler = async (
-  res: Response,
-  fn: () => Promise<Result> | Result,
-) => jsonResponse(res, () => errorHandlerFn(fn));
+export const jsonResponseWithErrorHandler = async (res: Response, fn: () => Promise<Result> | Result) =>
+  jsonResponse(res, () => errorHandlerFn(fn));
 
 @Injectable()
 export class ErrorHandler {
-  handleErrorWithJsonResponse = async (
-    res: Response,
-    fn: () => Promise<Result> | Result,
-  ) => {
+  handleErrorWithJsonResponse = async (res: Response, fn: () => Promise<Result> | Result) => {
     return jsonResponse(res, () => errorHandlerFn(fn));
   };
 }

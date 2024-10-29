@@ -1,0 +1,51 @@
+services:
+  db:
+    # 起動するイメージを指定
+    image: mysql:8.4.3
+    container_name: ${DB_CONTAINER_NAME}
+
+    # 環境変数を設定
+    environment:
+      - MYSQL_ROOT_HOST=${TEST_DB_HOST}
+      - MYSQL_DATABASE=${TEST_DB_NAME}
+      - MYSQL_USER=${TEST_DB_USER}
+      - MYSQL_PASSWORD=${TEST_DB_PASS}
+      - MYSQL_ROOT_PASSWORD=${TEST_DB_PASS}
+      - TZ=${TZ}
+
+    healthcheck:
+      test: "mysqladmin ping -h localhost"
+      interval: 10s
+      retries: 5
+
+    # ホスト側のポート:コンテナのポート
+    ports:
+      - '${TEST_DB_PORT}:3306'
+
+    # ボリュームバインド
+    volumes:
+      - ../db/conf:/etc/mysql/conf.d/:ro
+      - ../db/logs:/var/log/mysql
+      - ./script:/docker-entrypoint-initdb.d
+
+  test:
+    image: node:20.18.0-alpine
+
+    ports:
+      - '3000:3000'
+
+    # ソースコードを格納するフォルダをマウント
+    volumes:
+      - ..:/test
+
+    # 起動時のカレントフォルダを指定
+    working_dir: /test
+
+    # 起動後に実行するコマンドを指定
+    command: yarn test:e2e
+    # command: ["sh", "./setup_database.sh", "&&", "yarn test:e2e"]
+
+    #依存関係（apiコンテナより先にdbコンテナが起動するように設定）
+    depends_on:
+      db:
+        condition: service_healthy
