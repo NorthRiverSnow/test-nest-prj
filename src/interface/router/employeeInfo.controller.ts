@@ -5,7 +5,7 @@ import { GetEmployeeInfoService } from '../services/employeeInfo/getEmployeeInfo
 import { Response } from 'express';
 import { GetEmployeeInfoType } from '../../entities/decoder/employeeInfo.dto';
 
-@Controller('emoloyee-info')
+@Controller('employee-info')
 export class EmployeeInfoController {
   constructor(private readonly appService: GetEmployeeInfoService) {}
 

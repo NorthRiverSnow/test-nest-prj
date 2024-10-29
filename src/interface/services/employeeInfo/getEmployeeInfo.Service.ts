@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { Response } from 'express';
 
 import { Injectable } from '@nestjs/common';
 import { fnWrapper, jsonResponseWithErrorHandler } from '../decorator';
@@ -9,7 +10,6 @@ import {
   getEmployeeInfoResponsType,
 } from '../../../../src/entities/models/employeeInfo';
 
-import { Response } from 'express';
 import { wrapInTransaction } from '../../../../src/infrastracture/orm';
 import { QueryRunner } from 'typeorm';
 import { GetEmployeeInfoType } from '../../../../src/entities/decoder/employeeInfo.dto';
@@ -23,7 +23,6 @@ const QUERY = fs.readFileSync(path.resolve(__dirname, 'sql/getEmployeeInfo.sql')
   encoding: 'utf-8',
   flag: 'r',
 });
-
 @Injectable()
 export class GetEmployeeInfoService {
   private getDatabaseData = async (input: requestType, qr: QueryRunner): Promise<databaseType[]> => {
@@ -42,9 +41,7 @@ export class GetEmployeeInfoService {
     }));
 
   private getData = async (input: requestType): Promise<responseType> => {
-    console.log('aaaa');
     const data = await wrapInTransaction((qr) => this.getDatabaseData(input, qr)).then(this.transform);
-    console.log('data', data);
     return {
       code: 200,
       body: data,
@@ -52,7 +49,6 @@ export class GetEmployeeInfoService {
   };
 
   private getService = async (input: requestType) => {
-    console.log(input);
     return {
       code: 200,
       body: input,

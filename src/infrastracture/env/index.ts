@@ -1,9 +1,9 @@
-// const optionalLoadAsBoolean = (index: string, defaultval: boolean): boolean => {
-//   if (typeof process.env[index] === 'undefined') {
-//     return defaultval;
-//   }
-//   return process.env[index] === 'true';
-// };
+const optionalLoadAsBoolean = (index: string, defaultval: boolean = false): boolean => {
+  if (typeof process.env[index] === 'undefined') {
+    return defaultval;
+  }
+  return process.env[index] === 'true';
+};
 
 // const optionalLoadAsString = (index: string): string | undefined => {
 //   return process.env[index];
@@ -58,4 +58,5 @@ export const env = {
   ..._env,
   API_PORT: loadAsNumber('API_PORT'),
   TZ: loadAsString('TZ'),
+  TEST: optionalLoadAsBoolean('TEST'),
 };

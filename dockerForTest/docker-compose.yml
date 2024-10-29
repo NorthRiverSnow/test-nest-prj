@@ -34,6 +34,15 @@ services:
     ports:
       - '3000:3000'
 
+    environment:
+      - MYSQL_ROOT_HOST=${TEST_DB_HOST}
+      - MYSQL_DATABASE=${TEST_DB_NAME}
+      - MYSQL_USER=${TEST_DB_USER}
+      - MYSQL_PASSWORD=${TEST_DB_PASS}
+      - MYSQL_ROOT_PASSWORD=${TEST_DB_PASS}
+      - TEST=true
+      - TZ=${TZ}
+
     # ソースコードを格納するフォルダをマウント
     volumes:
       - ..:/test

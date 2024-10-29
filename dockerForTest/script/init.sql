@@ -25,3 +25,5 @@ INSERT INTO m_employee (EMPLOYEE_NAME, DEPARTMENT_ID) VALUES
   ("ジャワード マッハムード", 3),
   ("加藤 有希", 3),
   ("大沼 晶子", 1);
+
+select 'finish';

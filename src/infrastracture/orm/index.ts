@@ -1,5 +1,4 @@
 import { DataSource, QueryRunner } from 'typeorm';
-import { AsyncLocalStorage } from 'async_hooks';
 import { env } from '../env';
 
 // export const typeOrm = TypeOrmModule.forRoot({
@@ -14,7 +13,7 @@ import { env } from '../env';
 //   synchronize: false,
 // });
 
-export const typeOrmDataSource = new DataSource({
+export const typeOrm = new DataSource({
   type: 'mysql',
   host: env.DB_HOST,
   port: env.DB_PORT,
@@ -26,45 +25,43 @@ export const typeOrmDataSource = new DataSource({
   synchronize: true,
 });
 
-export const getDbConnection = () => {
-  if (!typeOrmDataSource.isInitialized) {
-    return typeOrmDataSource.initialize();
+export const getDbConnection = (): Promise<DataSource> => {
+  if (!typeOrm.isInitialized) {
+    return typeOrm.initialize();
   }
-  return typeOrmDataSource;
+  return Promise.resolve(typeOrm);
 };
 
-typeOrmDataSource
-  .initialize()
-  .then(() => {
-    console.log('Data Source has been initialized!');
-  })
-  .catch((err) => {
-    console.error('Error during Data Source initialization', err);
-  });
-
-export const dbDataSource = new AsyncLocalStorage<{ queryRunner: QueryRunner | null }>();
-
-export const getDbQueryRunner = () => {
-  const alsQueryRunner = dbDataSource.getStore()?.queryRunner;
-  let queryRunner: QueryRunner;
-  if (alsQueryRunner === undefined || alsQueryRunner === null) {
-    throw new Error('no database for teset');
-  } else {
-    queryRunner = alsQueryRunner;
+export class GlobalStore {
+  private qr: QueryRunner | null;
+  constructor() {
+    this.qr = null;
   }
-  return queryRunner;
+  setQueryRunner = (qr: QueryRunner) => {
+    this.qr = qr;
+  };
+  get queryRunner() {
+    return this.qr;
+  }
+}
+
+export const dbDataSource = new GlobalStore();
+
+export const getQueryRunner = () => {
+  if (dbDataSource.queryRunner === null) {
+    throw new Error('no test store');
+  }
+  return dbDataSource.queryRunner;
 };
 
 export const wrapInTransaction = async <T>(fn: (queryRunner: QueryRunner) => Promise<T>) => {
-  const alsQueryRunner = dbDataSource.getStore()?.queryRunner;
+  const globalQueryRunner = dbDataSource.queryRunner;
   let queryRunner: QueryRunner;
-  if (alsQueryRunner === undefined || alsQueryRunner === null) {
-    console.log('localstorage');
-    queryRunner = typeOrmDataSource.createQueryRunner();
+  if (globalQueryRunner === null) {
+    queryRunner = await getDbConnection().then((conn) => conn.createQueryRunner());
     await queryRunner.connect();
   } else {
-    console.log('queryRunner');
-    queryRunner = alsQueryRunner;
+    queryRunner = globalQueryRunner;
   }
   try {
     await queryRunner.startTransaction();
@@ -75,7 +72,7 @@ export const wrapInTransaction = async <T>(fn: (queryRunner: QueryRunner) => Pro
     await queryRunner.rollbackTransaction();
     throw error;
   } finally {
-    if (alsQueryRunner === undefined || alsQueryRunner === null) {
+    if (globalQueryRunner === undefined || globalQueryRunner === null) {
       await queryRunner.release();
     }
   }

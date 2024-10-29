@@ -4,14 +4,13 @@ import { ValidatorConstraint, ValidatorConstraintInterface, ValidationArguments 
 
 @ValidatorConstraint({ name: 'datetimeValidator', async: false })
 export class DatetimeValidator implements ValidatorConstraintInterface {
-  validate(value: string, args: ValidationArguments) {
-    console.log(args);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  validate(value: string, _args: ValidationArguments) {
     const date = new Date(value);
     return isNaN(date.getTime()) === true ? false : true;
   }
 
   defaultMessage(args: ValidationArguments) {
-    console.log(args);
     return `${args.property} should be Date!`;
   }
 }
@@ -41,12 +40,10 @@ export class ParseOptionalNumberPipe implements PipeTransform {
   transform(value: string | undefined | null) {
     if (!value) return value;
     const transformedValue = Number(value);
-    console.log('pipe', transformedValue);
     if (isNaN(transformedValue)) {
       console.log('error');
       throw new BadRequestException('Invalid Number');
     }
-    console.log(transformedValue);
     return transformedValue;
   }
 }
