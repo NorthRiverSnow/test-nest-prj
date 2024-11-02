@@ -1,18 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { closeTransaction, insertFixture, startTransaction } from '../typeOrm';
 import { EmployeeInfoModule } from '../../src/interface/loaders/employeeInfo.module';
 import { GetEmployeeInfoResponseDataType } from '../../src/entities/models/employeeInfo';
-import { QueryRunner } from 'typeorm';
 import { CreateEmployeeInfoType } from '../../src/entities/decoder/employeeInfo.dto';
+import { closeTransaction, insertFixture, startTransaction } from '../sequlize';
+import { Transaction } from 'sequelize';
 
-const GET_PATH = '/employee-info';
+const GET_PATH = '/employee-info/sequelize';
 type responseDataType = GetEmployeeInfoResponseDataType;
 type postRequestType = CreateEmployeeInfoType;
 
-const startFixture = async (qr: QueryRunner) => {
-  await insertFixture(qr, 'insertEmployeeInfo.sql');
+const startFixture = async (t: Transaction) => {
+  await insertFixture('insertEmployeeInfo.sql', t);
 };
 
 describe('EmproyeeInfo test', () => {

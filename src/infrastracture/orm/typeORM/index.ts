@@ -1,5 +1,5 @@
 import { DataSource, QueryRunner } from 'typeorm';
-import { env } from '../env';
+import { env } from '../../env';
 
 // export const typeOrm = TypeOrmModule.forRoot({
 //   type: 'mysql',

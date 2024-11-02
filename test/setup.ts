@@ -1,4 +1,5 @@
-import { dbDataSource, getDbConnection } from '../src/infrastracture/orm';
+import { globalTransaction } from '../src/infrastracture/orm/Seaquelize';
+import { dbDataSource, getDbConnection } from '../src/infrastracture/orm/typeORM';
 
 beforeAll(async () => {
   const qr = await getDbConnection().then((conn) => conn.createQueryRunner());
@@ -11,6 +12,7 @@ afterAll(async () => {
     const conn = await getDbConnection();
     await conn.destroy();
     dbDataSource.setQueryRunner(null);
+    globalTransaction.setTransaction(null);
   } catch (error) {
     console.log(error);
   }

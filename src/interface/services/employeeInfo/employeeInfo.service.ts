@@ -4,17 +4,25 @@ import { Injectable } from '@nestjs/common';
 import { fnWrapper, jsonResponseWithErrorHandler } from '../decorator';
 
 import { CreateEmployeeInfoType, GetEmployeeInfoType } from '../../../entities/decoder/employeeInfo.dto';
-import { getEmployeeInfo } from '../../../processes/getEmloyeeInfo.process';
-import { createEmployeeInfo } from '../../../processes/createEmloyeeInfo.process';
+import { getEmployeeInfoTypeOrm as getEmployeeInfoTypeOrm } from '../../../processes/getEmloyeeInfoTypeOrm.process';
+import { createEmployeeInfoTypeOrm as createEmployeeInfoTypeOrm } from '../../../processes/createEmloyeeInfoTypeOrm.process';
+import { getEmployeeInfoSequelize } from '../../../processes/getEmloyeeInfoSequelize.process';
+import { createEmployeeInfoSequelize } from '../../../processes/createEmloyeeInfoSequelize.process';
 
-type GetrequestType = GetEmployeeInfoType;
+type GetRequestType = GetEmployeeInfoType;
 type CreateRequestType = CreateEmployeeInfoType;
 
 @Injectable()
 export class EmployeeInfoService {
-  getEmproyeeInfoService = async (res: Response, input: GetrequestType) =>
-    jsonResponseWithErrorHandler(res, fnWrapper(getEmployeeInfo(input)));
+  getEmployeeInfoServiceTypeOrm = async (res: Response, input: GetRequestType) =>
+    jsonResponseWithErrorHandler(res, fnWrapper(getEmployeeInfoTypeOrm(input)));
 
-  createEmproyeeInfoService = async (res: Response, input: CreateRequestType[]) =>
-    jsonResponseWithErrorHandler(res, fnWrapper(createEmployeeInfo(input)));
+  getEmployeeInfoServiceSequelize = async (res: Response, input: GetRequestType) =>
+    jsonResponseWithErrorHandler(res, fnWrapper(getEmployeeInfoSequelize(input)));
+
+  createEmployeeInfoServiceTypeOrm = async (res: Response, input: CreateRequestType[]) =>
+    jsonResponseWithErrorHandler(res, fnWrapper(createEmployeeInfoTypeOrm(input)));
+
+  createEmployeeInfoServiceSequelize = async (res: Response, input: CreateRequestType[]) =>
+    jsonResponseWithErrorHandler(res, fnWrapper(createEmployeeInfoSequelize(input)));
 }

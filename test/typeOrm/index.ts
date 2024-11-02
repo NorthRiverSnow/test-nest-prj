@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { QueryRunner } from 'typeorm';
-import { getQueryRunner } from '../../src/infrastracture/orm';
+import { getQueryRunner } from '../../src/infrastracture/orm/typeORM';
 
 export const startTransaction = async (dataFixture: (queryRunner: QueryRunner) => Promise<void>) => {
   const qrDataStore = getQueryRunner();
