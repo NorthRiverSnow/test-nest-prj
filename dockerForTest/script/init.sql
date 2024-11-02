@@ -6,6 +6,8 @@ CREATE TABLE m_department (
   PRIMARY KEY (DEPARTMENT_ID)
 );
 
+-- $break$
+
 DROP TABLE IF EXISTS m_employee;
 CREATE TABLE m_employee (
   EMPLOYEE_ID int(11) NOT NULL AUTO_INCREMENT,
@@ -15,15 +17,5 @@ CREATE TABLE m_employee (
   PRIMARY KEY (EMPLOYEE_ID),
   FOREIGN KEY (DEPARTMENT_ID) REFERENCES m_department(DEPARTMENT_ID) ON DELETE RESTRICT
 );
-
-INSERT INTO m_department (DEPARTMENT_ID, DEPARTMENT_NAME) VALUES
-  (1, '総務部'),
-  (2, '営業部'),
-  (3, '技術部');
-
-INSERT INTO m_employee (EMPLOYEE_NAME, DEPARTMENT_ID) VALUES
-  ("ジャワード マッハムード", 3),
-  ("加藤 有希", 3),
-  ("大沼 晶子", 1);
 
 select 'finish';

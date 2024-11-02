@@ -14,7 +14,7 @@
     "start:prod": "node dist/main",
     "start:docker": "cd docker && docker-compose up -d",
     "start:docker:debug": "cd docker && docker-compose up",
-    "test:docker": "cd dockerForTest && docker-compose up",
+    "test:docker": "cd dockerForTest && docker-compose up --abort-on-container-exit",
     "stop:docker": "cd docker && docker-compose down",
     "stop:test:docker": "cd dockerForTest && docker-compose down",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",

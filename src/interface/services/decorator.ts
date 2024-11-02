@@ -20,22 +20,18 @@ const handleErrorFn = (error: unknown) => {
       body: 'the file size is too big',
     };
   }
+  return {
+    code: HttpStatus.INTERNAL_SERVER_ERROR,
+    body: 'internal server error',
+  };
 };
 
 const errorHandlerFn = async (decorateFn: () => Promise<Result> | Result, errorHandler = handleErrorFn) => {
   try {
     return await decorateFn();
   } catch (error) {
-    if (
-      error instanceof QueryFailedError ||
-      error instanceof EntityNotFoundError ||
-      error instanceof CannotCreateEntityIdMapError
-    ) {
-      console.log('error', error);
-      errorHandler(error);
-    } else {
-      errorHandler(error);
-    }
+    console.log('error', error);
+    return errorHandler(error);
   }
 };
 

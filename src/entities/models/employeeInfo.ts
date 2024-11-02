@@ -1,16 +1,21 @@
-export type getEmployeeInfoResponseDataType = {
+export type GetEmployeeInfoResponseDataType = {
   'employee-id': number;
   'employee-name': string;
   'department-id': number;
 };
 
-export type getEmployeeInfoDatabaseType = {
+export type EmployeeInfoDatabaseType = {
   EMPLOYEE_ID: number;
   EMPLOYEE_NAME: string;
   DEPARTMENT_ID: number;
 };
 
-export type getEmployeeInfoResponsType = {
+export type GetEmployeeInfoResponsType = {
   code: number;
-  body: getEmployeeInfoResponseDataType[] | string;
+  body: GetEmployeeInfoResponseDataType[] | string;
+};
+
+export type CreateEmployeeInfoResponsType = {
+  code: number;
+  body: string;
 };

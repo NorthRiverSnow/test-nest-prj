@@ -1,13 +1,18 @@
 import { Type } from 'class-transformer';
-import { IsDate, IsNumber, IsOptional } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class GetEmployeeInfoType {
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
   'department-id': number | undefined;
-  @IsOptional()
-  @IsDate()
-  @Type(() => Date)
-  'date-time': Date | undefined;
+}
+
+export class CreateEmployeeInfoType {
+  @Type(() => Number)
+  @IsNumber()
+  'department-id': number;
+
+  @IsString()
+  'employee-name': string;
 }

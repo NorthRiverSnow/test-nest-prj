@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { GetEmployeeInfoService } from '../services/employeeInfo/getEmployeeInfo.Service';
+import { EmployeeInfoService } from '../services/employeeInfo/employeeInfo.service';
 import { EmployeeInfoController } from '../router/employeeInfo.controller';
 import { ErrorHandler } from '../services/decorator';
 
 @Module({
   imports: [],
   controllers: [EmployeeInfoController],
-  providers: [GetEmployeeInfoService, ErrorHandler],
+  providers: [EmployeeInfoService, ErrorHandler],
 })
 export class EmployeeInfoModule {}

@@ -5,7 +5,9 @@ import { env } from './infrastracture/env';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe({ transform: true }));
+  app.useGlobalPipes(
+    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true, forbidUnknownValues: true }),
+  );
   await app.listen(3000);
   console.log(`
       ################################################

@@ -78,29 +78,24 @@ export const wrapInTransaction = async <T>(fn: (queryRunner: QueryRunner) => Pro
   }
 };
 
-// @Injectable()
-// export class TypeOrmTransaction {
-//   constructor(private dataSource: DataSource) {}
+export const setValuesBinds = <T extends object>(input: T[]): string => {
+  return input
+    .map(
+      (x) =>
+        `(${Object.keys(x)
+          .map(() => '?')
+          .join(',')})`,
+    )
+    .join(',');
+};
 
-//   async wrapInTransaction<T>(fn: (queryRunner: QueryRunner) => Promise<T>) {
-//     const queryRunner = this.dataSource.createQueryRunner();
-//     await queryRunner.connect();
-//     await queryRunner.startTransaction();
-
-//     try {
-//       const ret = await fn(queryRunner);
-//       await queryRunner.commitTransaction();
-//       return ret;
-//     } catch (error) {
-//       await queryRunner.rollbackTransaction();
-//       throw error;
-//     } finally {
-//       await queryRunner.release();
-//     }
-//   }
-// }
-
-// const startTransaction = () => {
-//   const aaa = typeOrm.
-//   new TypeOrmTransaction()
-// }
+export type InsertResult = {
+  fieldCount: number;
+  affectedRows: number;
+  insertId: number;
+  serverStatus: number;
+  warningCount: number;
+  message: string;
+  protocol41: boolean;
+  changedRows: number;
+};

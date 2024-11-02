@@ -1,16 +1,24 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Controller, Get, ParseIntPipe, Query, Res } from '@nestjs/common';
-import { GetEmployeeInfoService } from '../services/employeeInfo/getEmployeeInfo.Service';
+import { Body, Controller, Get, ParseArrayPipe, Post, Query, Res } from '@nestjs/common';
+import { EmployeeInfoService } from '../services/employeeInfo/employeeInfo.service';
 
 import { Response } from 'express';
-import { GetEmployeeInfoType } from '../../entities/decoder/employeeInfo.dto';
+import { GetEmployeeInfoType, CreateEmployeeInfoType } from '../../entities/decoder/employeeInfo.dto';
 
 @Controller('employee-info')
 export class EmployeeInfoController {
-  constructor(private readonly appService: GetEmployeeInfoService) {}
+  constructor(private readonly appService: EmployeeInfoService) {}
 
   @Get('/')
-  async getClass(@Res() res: Response, @Query() query: GetEmployeeInfoType) {
+  async getEmployeeInfo(@Res() res: Response, @Query() query: GetEmployeeInfoType) {
     await this.appService.getEmproyeeInfoService(res, query);
+  }
+
+  @Post('/')
+  async createEmployeeInfo(
+    @Res() res: Response,
+    @Body(new ParseArrayPipe({ items: CreateEmployeeInfoType })) employeeData: CreateEmployeeInfoType[],
+  ) {
+    await this.appService.createEmproyeeInfoService(res, employeeData);
   }
 }

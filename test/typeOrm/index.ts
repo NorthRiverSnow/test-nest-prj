@@ -24,8 +24,38 @@ export const closeTransaction = async () => {
   await qr.release();
 };
 
-export const insertFixture = async (qr: QueryRunner, fileName: string, params?: any[]) => {
+export const insertFixture = async (qr: QueryRunner, fileName: string, params?: unknown[][]) => {
   const QUERY = fs.readFileSync(path.resolve(__dirname, `sql/insert/${fileName}`), {
+    encoding: 'utf-8',
+    flag: 'r',
+  });
+  const splitQueries = QUERY.split('-- $break$\n');
+
+  let index = 0;
+  for (const query of splitQueries) {
+    await qr.query(query, params ? params[index] : null);
+    index++;
+  }
+};
+
+export const selectFixture = async <T>(qr: QueryRunner, fileName: string, params?: any[]): Promise<T[]> => {
+  const QUERY = fs.readFileSync(path.resolve(__dirname, `sql/select/${fileName}`), {
+    encoding: 'utf-8',
+    flag: 'r',
+  });
+  return await qr.query(QUERY, params);
+};
+
+export const updateFixture = async (qr: QueryRunner, fileName: string, params?: any[]) => {
+  const QUERY = fs.readFileSync(path.resolve(__dirname, `sql/update/${fileName}`), {
+    encoding: 'utf-8',
+    flag: 'r',
+  });
+  await qr.query(QUERY, params);
+};
+
+export const deleteFixture = async (qr: QueryRunner, fileName: string, params?: any[]) => {
+  const QUERY = fs.readFileSync(path.resolve(__dirname, `sql/delete/${fileName}`), {
     encoding: 'utf-8',
     flag: 'r',
   });

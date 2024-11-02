@@ -7,5 +7,7 @@
     "^.+\\.(t|j)s$": "ts-jest"
   },
   "setupFilesAfterEnv": ["./setup.ts"],
-  "setupFiles": ["dotenv-safe/config"]
+  "setupFiles": ["dotenv-safe/config"],
+  "verbose": true,
+  "silent": false
 }
