@@ -2,12 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { closeTransaction, insertFixture, startTransaction } from '../typeOrm';
-import { EmployeeInfoModule } from '../../src/interface/loaders/employeeInfo.module';
 import { GetEmployeeInfoResponseDataType } from '../../src/entities/models/employeeInfo';
 import { QueryRunner } from 'typeorm';
 import { CreateEmployeeInfoType } from '../../src/entities/decoder/employeeInfo.dto';
+import { RoutingModule } from '../../src/interface/loaders/routing.module';
 
-const GET_PATH = '/employee-info/typeorm';
+const GET_PATH = '/v1/employee-info/typeorm';
 type responseDataType = GetEmployeeInfoResponseDataType;
 type postRequestType = CreateEmployeeInfoType;
 
@@ -20,7 +20,7 @@ describe('EmproyeeInfo test', () => {
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [EmployeeInfoModule],
+      imports: [RoutingModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();

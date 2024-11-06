@@ -17,57 +17,57 @@ export class DatetimeValidator implements ValidatorConstraintInterface {
 
 export function ApiCommonCreateHeaderAndResponses(okResponse?: ApiResponseOptions) {
   return applyDecorators(
-    ApiResponse(okResponse || { status: 201, description: 'OK' }),
-    ApiResponse({ status: 400, description: 'Bad Request' }),
-    ApiResponse({ status: 409, description: 'Conflict' }),
-    ApiResponse({ status: 500, description: 'Internal Server Error' }),
     ApiBearerAuth(),
     ApiHeader({
       name: 'Authorization',
       description: 'Bearer token',
       required: true,
     }),
+    ApiResponse(okResponse || { status: 201, description: 'OK' }),
+    ApiResponse({ status: 400, description: 'Bad Request' }),
+    ApiResponse({ status: 409, description: 'Conflict' }),
+    ApiResponse({ status: 500, description: 'Internal Server Error' }),
   );
 }
 
 export function ApiCommonGetHeaderAndResponses(okResponse: ApiResponseOptions) {
   return applyDecorators(
-    ApiResponse(okResponse),
-    ApiResponse({ status: 400, description: 'Bad Request' }),
-    ApiResponse({ status: 500, description: 'Internal Server Error' }),
     ApiBearerAuth(),
     ApiHeader({
       name: 'Authorization',
       description: 'Bearer token',
       required: true,
     }),
+    ApiResponse(okResponse),
+    ApiResponse({ status: 400, description: 'Bad Request' }),
+    ApiResponse({ status: 500, description: 'Internal Server Error' }),
   );
 }
 
 export function ApiCommonDeleteHeaderAndResponses(okResponse?: ApiResponseOptions) {
   return applyDecorators(
-    ApiResponse(okResponse || { status: 200, description: 'OK' }),
-    ApiResponse({ status: 400, description: 'Bad Request' }),
-    ApiResponse({ status: 500, description: 'Internal Server Error' }),
     ApiBearerAuth(),
     ApiHeader({
       name: 'Authorization',
       description: 'Bearer token',
       required: true,
     }),
+    ApiResponse(okResponse || { status: 200, description: 'OK' }),
+    ApiResponse({ status: 400, description: 'Bad Request' }),
+    ApiResponse({ status: 500, description: 'Internal Server Error' }),
   );
 }
 
 export function ApiCommonUpdateHeaderAndResponses(okResponse?: ApiResponseOptions) {
   return applyDecorators(
-    ApiResponse(okResponse || { status: 200, description: 'OK' }),
-    ApiResponse({ status: 400, description: 'Bad Request' }),
-    ApiResponse({ status: 500, description: 'Internal Server Error' }),
     ApiBearerAuth(),
     ApiHeader({
       name: 'Authorization',
       description: 'Bearer token',
       required: true,
     }),
+    ApiResponse(okResponse || { status: 200, description: 'OK' }),
+    ApiResponse({ status: 400, description: 'Bad Request' }),
+    ApiResponse({ status: 500, description: 'Internal Server Error' }),
   );
 }

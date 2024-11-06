@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { EmployeeInfoModule } from '../../src/interface/loaders/employeeInfo.module';
 import { GetEmployeeInfoResponseDataType } from '../../src/entities/models/employeeInfo';
 import { CreateEmployeeInfoType } from '../../src/entities/decoder/employeeInfo.dto';
 import { closeTransaction, insertFixture, startTransaction } from '../sequlize';
 import { Transaction } from 'sequelize';
+import { RoutingModule } from '../../src/interface/loaders/routing.module';
 
-const GET_PATH = '/employee-info/sequelize';
+const GET_PATH = '/v1/employee-info/sequelize';
 type responseDataType = GetEmployeeInfoResponseDataType;
 type postRequestType = CreateEmployeeInfoType;
 
@@ -20,7 +20,7 @@ describe('EmproyeeInfo test', () => {
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [EmployeeInfoModule],
+      imports: [RoutingModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();

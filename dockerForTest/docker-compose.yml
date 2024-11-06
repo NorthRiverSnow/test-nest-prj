@@ -26,7 +26,16 @@ services:
     volumes:
       - ../db/conf:/etc/mysql/conf.d/:ro
       - ../db/logs:/var/log/mysql
-      - ./script:/docker-entrypoint-initdb.d
+    
+    # テスト実行時はテーブルだけで良いので、テーブルだけ実行
+    command: >
+      sh -c "
+      if [ /docker-entrypoint-initdb.d/01_initTable.sql ]; then
+        echo 'Running init.sql...';
+        mysql -u${MYSQL_USER} -p${MYSQL_PASSWORD} ${MYSQL_DATABASE} < /docker-entrypoint-initdb.d/init.sql;
+      fi;
+      exec docker-entrypoint.sh mysqld;
+      "
 
   test:
     image: node:20.18.0-alpine
