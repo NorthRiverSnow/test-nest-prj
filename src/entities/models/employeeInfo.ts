@@ -1,8 +1,13 @@
-export type GetEmployeeInfoResponseDataType = {
+import { ApiProperty } from '@nestjs/swagger';
+
+export class GetEmployeeInfoResponseDataType {
+  @ApiProperty()
   'employee-id': number;
+  @ApiProperty()
   'employee-name': string;
+  @ApiProperty()
   'department-id': number;
-};
+}
 
 export type EmployeeInfoDatabaseType = {
   EMPLOYEE_ID: number;

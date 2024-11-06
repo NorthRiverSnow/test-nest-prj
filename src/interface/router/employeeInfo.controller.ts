@@ -4,8 +4,12 @@ import { EmployeeInfoService } from '../services/employeeInfo/employeeInfo.servi
 
 import { Response } from 'express';
 import { GetEmployeeInfoType, CreateEmployeeInfoType } from '../../entities/decoder/employeeInfo.dto';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { GetEmployeeInfoResponseDataType } from '../../entities/models/employeeInfo';
+import { ApiCommonCreateHeaderAndResponses, ApiCommonGetHeaderAndResponses } from './utils/decorators';
 
-@Controller('employee-info')
+@ApiTags('employee-info')
+@Controller()
 export class EmployeeInfoController {
   constructor(private readonly appService: EmployeeInfoService) {}
 
@@ -22,11 +26,14 @@ export class EmployeeInfoController {
     await this.appService.createEmployeeInfoServiceTypeOrm(res, employeeData);
   }
 
+  @ApiCommonGetHeaderAndResponses({ status: 200, type: GetEmployeeInfoResponseDataType, isArray: true })
   @Get('/sequelize')
   async getEmployeeInfoSequelize(@Res() res: Response, @Query() query: GetEmployeeInfoType) {
     await this.appService.getEmployeeInfoServiceSequelize(res, query);
   }
 
+  @ApiBody({ type: CreateEmployeeInfoType, isArray: true })
+  @ApiCommonCreateHeaderAndResponses()
   @Post('/sequelize')
   async createEmployeeInfoSequelize(
     @Res() res: Response,

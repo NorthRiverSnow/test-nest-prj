@@ -6,8 +6,6 @@ CREATE TABLE m_department (
   PRIMARY KEY (DEPARTMENT_ID)
 );
 
--- $break$
-
 DROP TABLE IF EXISTS m_employee;
 CREATE TABLE m_employee (
   EMPLOYEE_ID int(11) NOT NULL AUTO_INCREMENT,

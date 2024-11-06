@@ -1,7 +1,9 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class GetEmployeeInfoType {
+  @ApiPropertyOptional()
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
@@ -9,10 +11,12 @@ export class GetEmployeeInfoType {
 }
 
 export class CreateEmployeeInfoType {
+  @ApiProperty()
   @Type(() => Number)
   @IsNumber()
   'department-id': number;
 
+  @ApiProperty()
   @IsString()
   'employee-name': string;
 }

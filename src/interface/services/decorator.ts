@@ -1,6 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 
 import { Response } from 'express';
+import { UniqueConstraintError } from 'sequelize';
 import { CannotCreateEntityIdMapError, EntityNotFoundError, QueryFailedError } from 'typeorm';
 
 const handleErrorFn = (error: unknown) => {
@@ -12,6 +13,13 @@ const handleErrorFn = (error: unknown) => {
     return {
       code: HttpStatus.INTERNAL_SERVER_ERROR,
       body: error.message,
+    };
+  }
+
+  if (error instanceof UniqueConstraintError && error.name === 'SequelizeUniqueConstraintError') {
+    return {
+      code: HttpStatus.CONFLICT,
+      body: 'Conflict',
     };
   }
   if (error instanceof Error && error.message === 'TOO_BIG_IMPORT_FILE_SIZE') {
