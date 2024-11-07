@@ -1,9 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { CreateEmployeeInfoType } from '../entities/decoder/employeeInfo.dto';
-import { CreateEmployeeInfoResponsType } from '../entities/models/employeeInfo';
-import { sequelize, wrapInTransaction } from '../infrastracture/orm/Seaquelize';
+import { CreateEmployeeInfoType } from '../../../entities/decoder/employeeInfo.dto';
+import { CreateEmployeeInfoResponsType } from '../../../entities/models/employeeInfo';
+import { sequelize, wrapInTransaction } from '../../../infrastracture/orm/Seaquelize';
 import { QueryTypes, Transaction } from 'sequelize';
 
 type RequestType = CreateEmployeeInfoType;

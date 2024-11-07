@@ -11,7 +11,7 @@
     "start:dev": "nodemon --exec ts-node -r dotenv-safe/config -r tsconfig-paths/register --transpile-only src/main.ts",
     "start:prod": "node dist/main",
     "start:docker": "cd docker && docker-compose up",
-    "start:docker:cleabdb": "cd docker && docker-compose up",
+    "start:docker:cleabdb": "cd docker && docker-compose down && docker-compose up",
     "test:docker": "cd dockerForTest && docker-compose up --abort-on-container-exit",
     "test:docker:cleandb": "cd dockerForTest && docker-compose down && docker-compose up --abort-on-container-exit",
     "stop:docker": "cd docker && docker-compose down",
@@ -21,7 +21,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --runInBand --config ./test/jest-e2e.json"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

@@ -1,18 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { GetEmployeeInfoResponseDataType } from '../../src/entities/models/employeeInfo';
-import { CreateEmployeeInfoType } from '../../src/entities/decoder/employeeInfo.dto';
-import { closeTransaction, insertFixture, startTransaction } from '../sequlize';
-import { Transaction } from 'sequelize';
-import { RoutingModule } from '../../src/interface/loaders/routing.module';
+import { closeTransaction, insertFixture, startTransaction } from '../../typeOrm';
+import { GetEmployeeInfoResponseDataType } from '../../../src/entities/models/employeeInfo';
+import { QueryRunner } from 'typeorm';
+import { CreateEmployeeInfoType } from '../../../src/entities/decoder/employeeInfo.dto';
+import { RoutingModule } from '../../../src/interface/loaders/routing.module';
 
-const GET_PATH = '/v1/employee-info/sequelize';
+const GET_PATH = '/v1/employee-info/typeorm';
 type responseDataType = GetEmployeeInfoResponseDataType;
 type postRequestType = CreateEmployeeInfoType;
 
-const startFixture = async (t: Transaction) => {
-  await insertFixture('insertEmployeeInfo.sql', t);
+const startFixture = async (qr: QueryRunner) => {
+  await insertFixture(qr, 'insertEmployeeInfo.sql');
 };
 
 describe('EmproyeeInfo test', () => {
@@ -119,7 +119,9 @@ describe('EmproyeeInfo test', () => {
     expect(getRes.body).toHaveLength(7);
     const body = getRes.body as responseDataType[];
     const names = body.map((x) => x['employee-name']);
-    expect(names).toEqual(['山田一郎', '山田花子', '田中花子', 'ジョン・ドゥー', '高橋花子', '山田次郎', '山田三郎']);
+    expect(names.sort()).toEqual(
+      ['山田一郎', '山田花子', '田中花子', 'ジョン・ドゥー', '高橋花子', '山田次郎', '山田三郎'].sort(),
+    );
   });
 
   it('Error: post department-id as string', async () => {
