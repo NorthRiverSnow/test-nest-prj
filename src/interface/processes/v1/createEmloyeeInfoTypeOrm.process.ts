@@ -2,9 +2,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { QueryRunner, InsertResult } from 'typeorm';
-import { CreateEmployeeInfoType } from '../entities/decoder/employeeInfo.dto';
-import { CreateEmployeeInfoResponsType } from '../entities/models/employeeInfo';
-import { setValuesBinds, wrapInTransaction } from '../infrastracture/orm/typeORM';
+import { CreateEmployeeInfoType } from '../../../entities/decoder/employeeInfo.dto';
+import { CreateEmployeeInfoResponsType } from '../../../entities/models/employeeInfo';
+import { setValuesBinds, wrapInTransaction } from '../../../infrastracture/orm/typeORM';
 
 type RequestType = CreateEmployeeInfoType;
 type ResponseType = CreateEmployeeInfoResponsType;

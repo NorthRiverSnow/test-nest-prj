@@ -1,14 +1,13 @@
 import { Response } from 'express';
 
 import { Injectable } from '@nestjs/common';
-import { fnWrapper, jsonResponseWithErrorHandler } from '../decorator';
+import { fnWrapper, jsonResponseWithErrorHandler } from '../../decorator';
 
-import { CreateEmployeeInfoType, GetEmployeeInfoType } from '../../../entities/decoder/employeeInfo.dto';
-import { getEmployeeInfoTypeOrm as getEmployeeInfoTypeOrm } from '../../../processes/getEmloyeeInfoTypeOrm.process';
-import { createEmployeeInfoTypeOrm as createEmployeeInfoTypeOrm } from '../../../processes/createEmloyeeInfoTypeOrm.process';
-import { getEmployeeInfoSequelize } from '../../../processes/getEmloyeeInfoSequelize.process';
-import { createEmployeeInfoSequelize } from '../../../processes/createEmloyeeInfoSequelize.process';
-
+import { CreateEmployeeInfoType, GetEmployeeInfoType } from '../../../../entities/decoder/employeeInfo.dto';
+import { getEmployeeInfoTypeOrm } from '../../../processes/v1/getEmloyeeInfoTypeOrm.process';
+import { getEmployeeInfoSequelize } from '../../../processes/v1/getEmloyeeInfoSequelize.process';
+import { createEmployeeInfoSequelize } from '../../../processes/v1/createEmloyeeInfoSequelize.process';
+import { createEmployeeInfoTypeOrm } from '../../../processes/v1/createEmloyeeInfoTypeOrm.process';
 type GetRequestType = GetEmployeeInfoType;
 type CreateRequestType = CreateEmployeeInfoType;
 
