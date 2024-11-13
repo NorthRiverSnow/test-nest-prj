@@ -37,7 +37,7 @@ export class GlobalStore {
   constructor() {
     this.qr = null;
   }
-  setQueryRunner = (qr: QueryRunner) => {
+  setQueryRunner = (qr: QueryRunner | null) => {
     this.qr = qr;
   };
   get queryRunner() {

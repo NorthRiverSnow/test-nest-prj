@@ -33,7 +33,7 @@ export const insertFixture = async (qr: QueryRunner, fileName: string, params?: 
 
   let index = 0;
   for (const query of splitQueries) {
-    await qr.query(query, params ? params[index] : null);
+    await qr.query(query, params ? params[index] : undefined);
     index++;
   }
 };

@@ -1,4 +1,4 @@
-import { globalTransaction } from '../src/infrastracture/orm/Seaquelize';
+import { globalTransaction, sequelize } from '../src/infrastracture/orm/Seaquelize';
 import { dbDataSource, getDbConnection } from '../src/infrastracture/orm/typeORM';
 
 beforeAll(async () => {
@@ -13,6 +13,7 @@ afterAll(async () => {
     await conn.destroy();
     dbDataSource.setQueryRunner(null);
     globalTransaction.setTransaction(null);
+    await sequelize.close();
   } catch (error) {
     console.log(error);
   }
