@@ -13,7 +13,7 @@ export class GlobalStore {
   constructor() {
     this.t = null;
   }
-  setTransaction = (transaction: Transaction) => {
+  setTransaction = (transaction: Transaction | null) => {
     this.t = transaction;
   };
   get transaction() {
