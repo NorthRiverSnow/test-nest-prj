@@ -20,13 +20,13 @@ services:
 
     # ホスト側のポート:コンテナのポート
     ports:
-      - '${TEST_DB_PORT}:3306'
+      - "${TEST_DB_PORT}:3306"
 
     # ボリュームバインド
     volumes:
       - ../db/conf:/etc/mysql/conf.d/:ro
       - ../db/logs:/var/log/mysql
-    
+
     # テスト実行時はテーブルだけで良いので、テーブルだけ実行
     command: >
       sh -c "
@@ -41,7 +41,7 @@ services:
     image: node:20.18.0-alpine
 
     ports:
-      - '3000:3000'
+      - "3000:3000"
 
     environment:
       - MYSQL_ROOT_HOST=${TEST_DB_HOST}

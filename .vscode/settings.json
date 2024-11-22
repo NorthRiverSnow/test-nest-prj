@@ -1,0 +1,10 @@
+{
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "file",
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "eslint.enable": true,
+  "eslint.run": "onType",
+  "eslint.format.enable": true,
+  "eslint.codeActionsOnSave.rules": ["source.fixAll.eslint"],
+  "extensions.ignoreRecommendations": false
+}

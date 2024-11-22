@@ -1,20 +1,20 @@
-import { globalTransaction, sequelize } from '../src/infrastracture/orm/Seaquelize';
-import { dbDataSource, getDbConnection } from '../src/infrastracture/orm/typeORM';
+import { globalTransaction, sequelize } from "../src/infrastracture/orm/Seaquelize"
+import { dbDataSource, getDbConnection } from "../src/infrastracture/orm/typeORM"
 
 beforeAll(async () => {
-  const qr = await getDbConnection().then((conn) => conn.createQueryRunner());
-  await qr.connect();
-  dbDataSource.setQueryRunner(qr);
-});
+  const qr = await getDbConnection().then((conn) => conn.createQueryRunner())
+  await qr.connect()
+  dbDataSource.setQueryRunner(qr)
+})
 
 afterAll(async () => {
   try {
-    const conn = await getDbConnection();
-    await conn.destroy();
-    dbDataSource.setQueryRunner(null);
-    globalTransaction.setTransaction(null);
-    await sequelize.close();
+    const conn = await getDbConnection()
+    await conn.destroy()
+    dbDataSource.setQueryRunner(null)
+    globalTransaction.setTransaction(null)
+    await sequelize.close()
   } catch (error) {
-    console.log(error);
+    console.log(error)
   }
-});
+})
