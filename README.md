@@ -34,7 +34,7 @@ $ yarn run start:dev
 $ yarn start:docker
 
 # ⭐️debug mode: Dockerでコンテナを再作成する(テーブル定義や./scripts/01_initTable.sql、初期データ./scripts/02_initDataを変更した場合に実行)
-$ yarn start:docker:cleabdb
+$ yarn start:docker:cleandb
 
 # docker-compose down: Dockerコンテナを削除する
 $ yarn stop:docker
