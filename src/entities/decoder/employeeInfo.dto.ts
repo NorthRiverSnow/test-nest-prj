@@ -3,7 +3,7 @@ import { Type } from 'class-transformer';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class GetEmployeeInfoType {
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({type: Number})
   @IsOptional()
   @IsNumber()
   @Type(() => Number)
