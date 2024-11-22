@@ -1,0 +1,3 @@
+{
+  "*.ts": ["bash -c 'yarn tsc --noEmit'", "eslint --fix"]
+}
